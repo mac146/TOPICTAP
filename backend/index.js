@@ -7,6 +7,9 @@ const app = express();
 
 app.use(express.json());
 
+const {resourceRouter}=require("./routes/resource")
+app.use("/api/resources",resourceRouter)
+
 connectdb();
 function main(){
     app.listen(5000);
