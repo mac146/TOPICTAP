@@ -3,7 +3,11 @@ const mongoose=require('mongoose');
 const Schema=mongoose.Schema;
 
 const resource=new Schema({
-    type:String,
+    type: {
+        type: String,
+        enum: ["video", "article", "podcast"],
+        required: true
+    },
     title:String,
     description:String,
     thumbnail:String,

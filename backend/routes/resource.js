@@ -51,8 +51,16 @@ resourceRouter.get("/",async(req,res)=>{
 
 resourceRouter.get("/topic",async(req,res)=>{
     const topic=req.query.name;
+    const type = req.query.type;
+    
+    const finalType = type || "video";
+
+    
     try{
-        const resources=await resourceModel.find({topic:topic})
+        const resources=await resourceModel.find({
+            topic:topic,
+            type:finalType
+        })
 
         if(resources.length===0){
             return res.status(404).json({
