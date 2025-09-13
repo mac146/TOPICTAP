@@ -15,6 +15,10 @@ const resource=new Schema({
     publishedAt:String,
     topic:String,
     url:String,
+    ratings: {
+    upvotes: { type: Number, default: 0 },
+    downvotes: { type: Number, default: 0 }
+  }
 })
 
 const resourceModel=mongoose.model("resources",resource);

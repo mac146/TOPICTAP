@@ -10,37 +10,35 @@ resourceRouter.post("/",async(req,res)=>{
             message:"unauthorized"
         })
     }
+console.log("Incoming body:", req.body); // 👈 log request
+    
+        try {
+    let resources;
 
-    else {
-        const {title,description,url,thumbnail,duration,publishedAt,type,topic}=req.body;
+    if (Array.isArray(req.body)) {
+      resources = await resourceModel.insertMany(req.body);
+    } else {
+      resources = await resourceModel.create(req.body);
+    }
 
-        try{
-        const resource=await resourceModel.create({
-        title,
-        description,
-        url,
-        thumbnail,
-        duration,
-        publishedAt,
-        type,
-        topic
-    })
-
-    res.status(200).json({
-        message:"resource created"
-    })
+    res.status(201).json({
+      message: "resource(s) created",
+      data: resources,
+    });
     } catch(e){
+        
     res.status(500).json({
-        message:"not able to create resource"
+        message:"not able to create resource",
+        error:e.message
     })
   }
+    
+});
 
-    }    
-})
 
 resourceRouter.get("/",async(req,res)=>{
     try{
-        const resources=await resourceModel.find()
+        const resources=await resourceModel.find().sort({ "ratings.upvotes": -1 });
     res.status(200).json(resources)
     } catch(e){
         res.status(500).json({
@@ -58,9 +56,9 @@ resourceRouter.get("/topic",async(req,res)=>{
     
     try{
         const resources=await resourceModel.find({
-            topic:topic,
+            topic: { $regex: topic, $options: "i" },
             type:finalType
-        })
+        }).sort({ "ratings.upvotes": -1 });
 
         if(resources.length===0){
             return res.status(404).json({
